@@ -19,7 +19,7 @@ def list_catalog_products(skip: int = 0, limit: int = 100, session: Session = De
 
     return products
 
-@router.get('//{product_id}', response_model=ProductResponse)
+@router.get('/{product_id}', response_model=ProductResponse)
 def get_product_details(product_id: int, session: Session = Depends(get_session)):
     product = session.get(Product, product_id)
     if not product:
@@ -31,7 +31,7 @@ def get_product_details(product_id: int, session: Session = Depends(get_session)
     return product
 
 @router.post('/',response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
-def create_new_product(product_in: ProductCreate, session):
+def create_new_product(product_in: ProductCreate, session: Session = Depends(get_session)):
     new_product = Product.model_validate(product_in) #???
     session.add(new_product)
     session.commit()
@@ -49,7 +49,7 @@ def update_product_inventory(product_id: int, product_in: ProductUpdate, session
         )
     
     payload = product_in.model_dump(exclude_unset=True)
-    for key, val in product_in.items():
+    for key, val in payload.items():
         setattr(db_product, key, val)
 
     session.add(db_product)

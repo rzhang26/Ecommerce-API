@@ -13,7 +13,7 @@ ALGORITHM = 'HS256'
 async def get_current_user(token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, 
-        details='Could not validate credentials.',
+        detail='Could not validate credentials.',
         headers={'WWW-Authenticate': 'Bearer'}
     )
     

@@ -26,12 +26,11 @@ def checkout_shopping_cart(order_in: OrderCreate, session: Session = Depends(get
         total_amount_in_cents=0
     )
     session.add(master_order)
-
     session.flush()
 
     calculated_total_accumulation = 0
 
-    for item in order_in.items():
+    for item in order_in.items:
         product = session.get(Product, item.product_id)
 
         if not product:
@@ -56,7 +55,7 @@ def checkout_shopping_cart(order_in: OrderCreate, session: Session = Depends(get
             order_id=master_order.id,
             product_id=product.id,
             quantity=item.quantity,
-            price_at_purchase=product.price_in_cents
+            price_at_purchase_in_cents=product.price_in_cents
         )
         session.add(db_order_item)
     

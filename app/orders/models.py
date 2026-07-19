@@ -1,7 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 from enum import Enum
 from typing import List, Optional
-from datetime import datetime
 from zoneinfo import ZoneInfo
 
 EASTERN_TZ = ZoneInfo('America/New_York')
@@ -22,7 +21,7 @@ class OrderItemResponse(SQLModel):
     id: int
     product_id: int
     quantity: int
-    price_at_purchase: int 
+    price_at_purchase_in_cents: int 
 
 class OrderResponse(SQLModel):
     id: int
