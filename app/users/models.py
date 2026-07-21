@@ -2,11 +2,12 @@ from sqlmodel import SQLModel, Field, Relationship
 from typing import List, Optional
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from pydantic import EmailStr
 
 EASTERN_TZ = ZoneInfo('America/New_York')
 
 class UserBase(SQLModel):
-    email: str = Field(unique=True, index=True, nullable=False)
+    email: EmailStr = Field(unique=True, index=True, nullable=False)
 
 class UserCreate(UserBase):
     password: str

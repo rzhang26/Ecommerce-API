@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
 from app.database import get_session, SessionDep
@@ -12,17 +13,24 @@ router = APIRouter(prefix='/users', tags=['Users/Authentication'])
 @router.post('/', response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user_acct(user_in: UserCreate, session: Session = Depends(get_session)): #SessionDep why not?
     hashed = hash_password(user_in.password)
+    db_user = User(email=user_in.email, hashed_password=hashed)
     
-    db_user = User(
-        email=user_in.email,
-        hashed_password=hashed
-    )
-    
-    session.add(db_user)
-    session.commit()  # <-- CRITICAL for test framework persistence!
+    try:
+        session.add(db_user)
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A user with this email already exists."
+        )
+        
     session.refresh(db_user)
     return db_user
 
+
+#will need to figure out a way to consume this method outputs in overall other routers' endpoints
 @router.post('/login')
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = Depends(get_session)):
     user = session.exec(select(User).where(User.email == form_data.username)).first()

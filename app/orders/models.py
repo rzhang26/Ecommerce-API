@@ -1,11 +1,11 @@
 from sqlmodel import SQLModel, Field, Relationship
-from enum import Enum
+from enum import StrEnum
 from typing import List, Optional
 from zoneinfo import ZoneInfo
 
 EASTERN_TZ = ZoneInfo('America/New_York')
 
-class OrderStatus(str, Enum):
+class OrderStatus(StrEnum):
     PENDING = 'pending'
     COMPLETED = 'completed'
     CANCELLED = 'cancelled'
@@ -54,33 +54,30 @@ class OrderResponse(SQLModel):
 #     items: List[OrderItem] = Relationship(back_populates='order')
 
 class Order(SQLModel, table=True):
-    __tablename__ = "orders"
+    __tablename__ = 'orders'
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(foreign_key="users.id", nullable=False)
+    user_id: int = Field(foreign_key='users.id', nullable=False)
     total_amount_in_cents: int = Field(default=0, nullable=False)
     
     # Use standard string forward-references for the typing declaration
-    items: List["OrderItem"] = Relationship(back_populates="order")
+    items: List['OrderItem'] = Relationship(back_populates='order')
 
 
-# 2. OrderItem Model Definition
-class OrderItem(SQLModel, table=True):  # <-- Make absolutely sure table=True is here!
-    __tablename__ = "order_items"
+class OrderItem(SQLModel, table=True):  
+    __tablename__ = 'order_items'
 
     id: Optional[int] = Field(default=None, primary_key=True)
     
-    # Foreign Keys referencing table names
-    order_id: int = Field(foreign_key="orders.id", nullable=False)
-    product_id: int = Field(foreign_key="products.id", nullable=False)
+    order_id: int = Field(foreign_key='orders.id', nullable=False)
+    product_id: int = Field(foreign_key='products.id', nullable=False)
     
     quantity: int = Field(default=1, nullable=False)
     price_at_purchase_in_cents: int = Field(nullable=False)
 
-    # Relationships pointing back to parent tables
-    order: Order = Relationship(back_populates="items")
+    order: Order = Relationship(back_populates='items') #the equivalents of a join in sql
 
 
-# 3. Force Pydantic & SQLModel to compile type resolution mappings immediately
+#Forces Pydantic & SQLModel to compile type resolution mappings immediately
 Order.model_rebuild()
 OrderItem.model_rebuild()

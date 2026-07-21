@@ -10,5 +10,5 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-    """Returns a cached singleton instance of the application settings."""
+    # Returns a cached singleton instance of the application settings
     return Settings()

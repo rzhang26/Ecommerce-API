@@ -7,11 +7,13 @@ from app.users.models import User
 from app.products.models import Product
 from app.orders.models import Order, OrderItem
 
+
 app = FastAPI(title='E-commerce API')
 app.include_router(users_router)
 app.include_router(products_router)
 app.include_router(orders_router)
 
+
 @app.get('/')
 def root():
-    return {'message': 'hello world, welcome to a production ready e-commerce API'}
+    return {'message': 'hello world, welcome to my ready e-commerce API'}

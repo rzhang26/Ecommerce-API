@@ -37,4 +37,3 @@ class Product(ProductBase, table=True):
 #     price_in_dollars: int = Field(default=0, nullable=False)
 
 #     order_items: List['OrderItem'] = Relationship(back_populates='product')
-

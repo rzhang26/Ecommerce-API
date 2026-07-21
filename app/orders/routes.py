@@ -71,5 +71,10 @@ def checkout_shopping_cart(order_in: OrderCreate, session: Session = Depends(get
 def get_user_order_history(session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     statement = select(Order).where(Order.user_id == current_user.id).order_by(Order.created_at.desc())
     orders = session.exec(statement).all()
+    if not orders:
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"This user has no order history."
+            )
 
     return orders
